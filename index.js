@@ -1,29 +1,36 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
 
 const app = express();
-const PORT = process.env.PORT || 10000;
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Root check
-app.get("/", (req, res) => {
-  res.send("MUSE backend is live 🚀");
+const PORT = process.env.PORT || 3000;
+
+/* Health check */
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
-// Health check (IMPORTANT)
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    service: "muse-backend",
-    uptime: process.uptime(),
+/* LOGIN API */
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  // Temporary demo login (no DB yet)
+  if (email && password) {
+    return res.json({
+      success: true,
+      token: "demo-token-123",
+      user: { email }
+    });
+  }
+
+  res.status(400).json({
+    success: false,
+    message: "Invalid credentials"
   });
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
